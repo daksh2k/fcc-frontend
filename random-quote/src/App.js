@@ -188,7 +188,7 @@ const Tags = (props) => {
   const quoteTags = props.tags.filter(v => v!==props.current.replaceAll("-","_"))
   return (
     <div className="tags-cont row">
-      {props.current!=="" && <button className="tag btn col dismiss" onClick={props.callback}>{props.current}<span className="dismiss dismiss-icon" aria-hidden="true">&times;</span></button>}
+      {props.current!=="" && <button className="tag btn col-4 dismiss" onClick={props.callback}>{props.current}<span className="dismiss dismiss-icon" aria-hidden="true">&times;</span></button>}
       {quoteTags.map((tag,key) => {  
         return (<button key={key} className="tag btn col" onClick={props.callback}>{tag}</button>)
         })}

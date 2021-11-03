@@ -27,6 +27,7 @@
 #text-cont{
   max-height: 80vh;
   overflow: auto;
+  align-self: flex-start;
 }
 #text{
   font-size: 24px;
@@ -43,16 +44,18 @@
 }
 .tags-cont {
   align-self: flex-start;
-  padding-left : 3rem;
+  padding-left : .5rem;
   display: flex;
   align-items: center;
 }
 .tag{
-  /* color: rgba(var(--accent)); */
   color: #212529 !important;
   background-color: rgba(var(--accent),.2);
   transition: color, background-color 1s ease;
+  outline : none !important;
+  box-shadow: none !important;
   margin-right: .75rem;
+  margin-top: .5rem;
 }
 .nav-button{
   transition: background-color 1s ease;
@@ -73,4 +76,22 @@
 .navigation{
   display: flex;
   justify-content: center;
+}
+.dismiss.tag{
+  color: grey !important;
+  padding-right: 5px;
+  border: 2px solid var(--bs-success);
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+.dismiss-icon{
+  line-height: 0;
+  font-size: 2.5rem;
+  padding-bottom: .4rem;
+  color: red !important;
+  font-weight: bolder;
+  padding-left: .5rem;
+  font-size: 2rem;
 }

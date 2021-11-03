@@ -7,7 +7,7 @@ class App extends React.Component{
     this.updateQuote = this.updateQuote.bind(this)
     this.goBack = this.goBack.bind(this)
     this.fetchTag = this.fetchTag.bind(this)
-    this.baseURL = "https://smile-plz.smileplz.repl.co/quotes?limit=20"
+    this.baseURL = "https://smile-plz.smileplz.repl.co/quotes?limit=100"
     this.state = {
       quotes : [],
       index : -1,
@@ -34,25 +34,46 @@ class App extends React.Component{
   }
  
   async fetchQuotes(params=""){
-    console.log(params)
     const res = await fetch(this.baseURL+params)      
-    // await new Promise(resolve => setTimeout(resolve, 50000));
     return res.json()
   }
 
   fetchTag(event){
+    if (event.target.classList.contains("dismiss")){
+      this.setState({
+        status: "fetching",
+        quotes: [],
+        index: -1
+      })
+      this.fetchQuotes()
+      .then(json => {
+         this.setState({
+            quotes : json.quotes,
+            status : "fetched",
+            current: ""
+         })
+        this.updateQuote()
+      })
+      .catch((err) => {
+        console.error(err)
+        this.setState({
+          status: "error"
+        })
+      })
+      return
+    }
     const tag = event.target.innerText.replaceAll("_","-")
-    console.log(tag)
     this.setState({
-      status: "fetching"
+      status: "fetching",
+      quotes: [],
+      index: -1
     })
     this.fetchQuotes("&tags="+tag)
       .then(json => {
          this.setState({
             quotes : json.quotes,
             status : "fetched",
-            current: tag,
-            index: -1
+            current: tag
          })
         this.updateQuote()
       })
@@ -83,7 +104,7 @@ class App extends React.Component{
     let fmtedTags = []
     for(let tag of tags.split(",")){
       tag = tag.trim().replaceAll(" ","_").replaceAll("-","_")
-      if(tag.length<20)
+      if(tag.length<20 && tag.length>2)
         fmtedTags.push(tag)
       if(fmtedTags.length>3)
         break;
@@ -92,12 +113,7 @@ class App extends React.Component{
   }  
   updateQuote(){
     document.documentElement.style.setProperty("--accent",this.colors[Math.floor(Math.random()*this.colors.length)])
-    if(this.state.index===this.state.quotes.length){
-      this.setState({
-        index: -1
-      })
-    }
-    else if (this.state.index===this.state.quotes.length-10){
+    if (this.state.index===this.state.quotes.length-10){
       this.setState({
         status: "fetching"
       })
@@ -110,7 +126,13 @@ class App extends React.Component{
        )
      })
   }
-  const newIndex = this.state.index + 1
+  let newIndex = this.state.index + 1
+  if (newIndex===this.state.quotes.length){
+    newIndex = 0
+    this.setState({
+      current: this.state.current+" (repeating)"
+    })
+  }
   this.setState(state => ({
      text: state.quotes[newIndex].quote,
      author: "- "+state.quotes[newIndex].author,
@@ -139,7 +161,7 @@ class App extends React.Component{
   render() {
     return( 
        <div className="card" id="quote-box">
-         {this.state.current!=="" && <div className="current card-heading">#{this.state.current} Quotes</div>}
+         {this.state.current!=="" && <h2 className="current card-title">#{this.state.current} Quotes</h2>}
          <div id="text-cont">
          <svg viewBox="0 0 512 512" width="30" title="quote-left" className="quote-icon">
            <path d="M464 256h-80v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8c-88.4 0-160 71.6-160 160v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48zm-288 0H96v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8C71.6 32 0 103.6 0 192v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48z" />
@@ -148,7 +170,7 @@ class App extends React.Component{
        </div>
          <div id="author">{this.state.author}</div>
          {/* {this.state.text!=="" && <div id="tags">{" #"+this.state.tags.join(" #")}</div> } */}
-         {this.state.text!=="" && <Tags tags = {this.state.tags} callback={this.fetchTag} /> }
+         {this.state.text!=="" && <Tags tags={this.state.tags} current={this.state.current} callback={this.fetchTag} /> }
          <div className="bottom-bar">
            {this.state.text!=="" && <Social links= {this.state.links}/>}
            <div className="navigation">
@@ -163,10 +185,12 @@ class App extends React.Component{
   }
 }
 const Tags = (props) => {
+  const quoteTags = props.tags.filter(v => v!==props.current.replaceAll("-","_"))
   return (
-    <div className="tags-cont">
-      {props.tags.map((tag,key) => {  
-        return (<button key={key} className="tag btn" onClick={props.callback}>{tag}</button>)
+    <div className="tags-cont row">
+      {props.current!=="" && <button className="tag btn col dismiss" onClick={props.callback}>{props.current}<span className="dismiss dismiss-icon" aria-hidden="true">&times;</span></button>}
+      {quoteTags.map((tag,key) => {  
+        return (<button key={key} className="tag btn col" onClick={props.callback}>{tag}</button>)
         })}
     </div>
   )

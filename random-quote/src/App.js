@@ -7,12 +7,12 @@ class App extends React.Component{
     this.updateQuote = this.updateQuote.bind(this)
     this.goBack = this.goBack.bind(this)
     this.fetchTag = this.fetchTag.bind(this)
-    this.baseURL = "https://smile-plz.smileplz.repl.co/quotes?limit=100"
+    this.baseURL = "https://smile-plz.smileplz.repl.co/quotes?limit=100&format=json"
     this.state = {
       quotes : [],
       index : -1,
       status: "initial",
-      text : "",
+      text : "Fetching Random quotes!",
       author : "",
       tags: [],
       current: "",
@@ -130,7 +130,7 @@ class App extends React.Component{
   if (newIndex===this.state.quotes.length){
     newIndex = 0
     this.setState({
-      current: this.state.current+" (repeating)"
+      status: "Full"
     })
   }
   this.setState(state => ({
@@ -169,13 +169,12 @@ class App extends React.Component{
          <p id="text">{this.state.text}</p>
        </div>
          <div id="author">{this.state.author}</div>
-         {/* {this.state.text!=="" && <div id="tags">{" #"+this.state.tags.join(" #")}</div> } */}
          {this.state.text!=="" && <Tags tags={this.state.tags} current={this.state.current} callback={this.fetchTag} /> }
          <div className="bottom-bar">
            {this.state.text!=="" && <Social links= {this.state.links}/>}
            <div className="navigation">
              {this.state.index>0 && <button className="btn btn-primary nav-button" id="go-back" onClick={this.goBack}>Go Back</button> }
-             {(this.state.status!=="fetched" && (this.state.index===this.state.quotes.length || this.state.quotes.length===0)) ? 
+             {(this.state.status!=="fetched" && (this.state.index===this.state.quotes.length-1 || this.state.quotes.length===0)) ? 
               <button className="btn btn-primary nav-button disabled" id="new-quote">Fetching Quotes</button>  :
               <button className="btn btn-primary nav-button" id="new-quote" onClick={this.updateQuote}>New Quote</button> }
            </div>

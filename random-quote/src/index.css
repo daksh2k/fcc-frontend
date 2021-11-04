@@ -1,6 +1,13 @@
 :root{
   --accent: "38,70,83";
   --main: #DDD;
+  --text: #212529;
+}
+@media(prefers-color-scheme: dark){
+  :root{
+    --main: #111;
+    --text: #E1E5E9;
+  }
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -8,11 +15,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
 html, body {
   margin: 0;

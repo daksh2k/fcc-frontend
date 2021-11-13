@@ -7,7 +7,7 @@ class App extends React.Component{
     this.updateQuote = this.updateQuote.bind(this)
     this.goBack = this.goBack.bind(this)
     this.fetchTag = this.fetchTag.bind(this)
-    this.baseURL = "https://smile-plz.smileplz.repl.co/quotes?limit=100&format=json"
+    this.baseURL = "https://smile-plz.smileplz.repl.co/quotes?limit=100&format=json&length=20,300"
     this.state = {
       quotes : [],
       index : -1,
@@ -103,8 +103,8 @@ class App extends React.Component{
   formatTags(tags){
     let fmtedTags = []
     for(let tag of tags.split(",")){
-      tag = tag.trim().replaceAll(" ","_").replaceAll("-","_")
-      if(tag.length<20 && tag.length>2)
+      tag = tag.trim().replaceAll(" ","_").replaceAll("-","_").toLowerCase()
+      if(tag.length<20 && tag.length>2 && !fmtedTags.includes(tag))
         fmtedTags.push(tag)
       if(fmtedTags.length>3)
         break;
